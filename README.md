@@ -35,7 +35,6 @@ Indefinite Crew Exposure
 Identification
 
 [V2 6009] Decompression Sickness
-
 Treatment Capability
 
 [V2 6011] Post Landing Relative Humidity
