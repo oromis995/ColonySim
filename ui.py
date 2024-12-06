@@ -72,7 +72,14 @@ def draw_colonist_info(screen, font, colonists):
             f"Weight: {colonist.weight:.1f} kg",
             f"Height: {colonist.height} cm",
             f"Hair Color: {colonist.hair_color}",
-            f"BMI: {colonist.bmi():.1f}"
+            f"BMI: {colonist.bmi():.1f}",
+            f"Days Without Job: {colonist.days_without_job}",
+            f"Aerobic Capacity: {colonist.aerobic_capacity}",
+            f"Max CO2 Tolerance: {colonist.max_co2_tolerance}",
+            f"O2 Partial Pressure Range: {colonist.o2_partial_pressure_range}",
+            f"Pressure Tolerance: {colonist.pressure_tolerance}",
+            f"RH Preference: {colonist.rh_preference}%",
+            f"Temp Preference: {colonist.temp_preference}°C"
         ]
         x_start = 20
         for line in info_lines:

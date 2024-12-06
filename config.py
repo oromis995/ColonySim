@@ -43,7 +43,6 @@ BMI_THRESHOLD_MALE = 13.0
 BMI_THRESHOLD_FEMALE = 11.0
 DAILY_WEIGHT_LOSS_RATE = 0.005
 
-# Initial conditions
 INITIAL_POPULATION = 1
 INITIAL_O2 = 4000.0
 INITIAL_H2O = 1200.0
@@ -51,4 +50,7 @@ INITIAL_MEALS = 100.0
 INITIAL_CO2 = 400.0
 INITIAL_SOLID_WASTE = 0.0
 INITIAL_LIQUID_WASTE = 0.0
-INITIAL_FE = 0.0  # Now Fe = 0 initially.
+INITIAL_FE = 0.0
+
+# New constants for co2 scrubber
+CO2_SCRUB_RATE = 5.0  # ppm per tick reduction just as example

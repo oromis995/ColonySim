@@ -1,5 +1,4 @@
 # game.py
-
 import sys
 import pygame
 from pygame.locals import QUIT, VIDEORESIZE
@@ -22,19 +21,17 @@ class Game:
 
         self.modules = [
             CoreModule(),
-            HabitationModule()  # Not used, just defined
+            HabitationModule()  # Not used
         ]
         core = self.modules[0]
 
-        # Caps
         max_o2 = core.max_o2
         max_h2o = core.max_h2o
         max_meals = core.max_meals
         max_solid = core.max_solid_waste
         max_liquid = core.max_liquid_waste
-        max_fe = 0.0  # no building for Fe
+        max_fe = 0.0
 
-        # Clamp initial conditions
         population = INITIAL_POPULATION
         O2 = min(INITIAL_O2, max_o2)
         H2O = min(INITIAL_H2O, max_h2o)
@@ -42,7 +39,7 @@ class Game:
         CO2 = INITIAL_CO2
         SolidWaste = min(INITIAL_SOLID_WASTE, max_solid)
         LiquidWaste = min(INITIAL_LIQUID_WASTE, max_liquid)
-        Fe = min(INITIAL_FE, max_fe)  # Fe always 0
+        Fe = min(INITIAL_FE, max_fe)
 
         self.resources = {
             "Population": population,
@@ -55,8 +52,9 @@ class Game:
             "Fe": Fe
         }
 
+        # Alice is now 20
         self.colonists = [
-            Person(first_name="Alice", last_name="Smith", gender="F", age=30, career="Eng", weight=70.0, height=170.0, hair_color="Red", assigned_bed=False, assigned_job=False)
+            Person(first_name="Alice", last_name="Smith", gender="F", age=20, career="Eng", weight=70.0, height=170.0, hair_color="Red", assigned_bed=False, assigned_job=False)
         ]
 
         self.simulation_time = 0.0
@@ -74,7 +72,6 @@ class Game:
             "Meals": max_meals,
             "Solid Waste": max_solid,
             "Liquid Waste": max_liquid
-            # Fe implicitly 0
         }
 
     def get_current_day(self):
@@ -92,13 +89,21 @@ class Game:
     def run_simulation(self, dt):
         self.simulation_time += dt
         self.game_time += dt * TIME_SCALE
-        update_simulation(dt, self.colonists, self.resources, self.max_caps)
+        update_simulation(dt, self.colonists, self.resources, self.max_caps, self.modules)
 
         current_day = self.get_current_day()
         if current_day > self.previous_day:
+            self.update_jobless_days()
             end_of_day_update(self.colonists, self.resources)
             self.previous_day = current_day
             self.day_number = current_day + 1
+
+    def update_jobless_days(self):
+        for c in self.colonists:
+            if not c.assigned_job:
+                c.days_without_job += 1
+            else:
+                c.days_without_job = 0
 
     def draw(self):
         self.screen.fill((34, 139, 34))
