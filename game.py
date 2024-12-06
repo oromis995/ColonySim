@@ -7,7 +7,7 @@ from config import (TIME_SCALE, INITIAL_POPULATION, INITIAL_O2, INITIAL_H2O, INI
 from simulation import update_simulation, end_of_day_update
 from ui import draw_top_bar, draw_simulation_time, draw_colonist_info
 from entities.person import Person
-from entities.building import CoreModule, HabitationModule
+from entities.module import CoreModule, HabitationModule
 
 class Game:
     def __init__(self, width=1280, height=720, title="Colony Sim"):

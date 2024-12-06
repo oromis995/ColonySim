@@ -1,6 +1,6 @@
-# entities/building.py
+# entities/module.py
 
-from entities.components import CO2Scrubber, O2Controller, PressureRegulator, HumidityController, EnvironmentalMonitor, VentilationController
+from entities.component import CO2Scrubber, O2Controller, PressureRegulator, HumidityController, EnvironmentalMonitor, VentilationController
 
 class Module:
     def __init__(self, name, capacity):
