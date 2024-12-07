@@ -1,7 +1,7 @@
 # ui.py
 
 import pygame
-from config import RESOURCE_LABELS
+from config import RESOURCE_LABELS, TIME_SCALE
 
 def draw_top_bar(screen, base_font, resources, max_caps):
     top_bar_height = 50
@@ -9,7 +9,7 @@ def draw_top_bar(screen, base_font, resources, max_caps):
 
     texts = []
     for res_name, res_value in resources.items():
-        display_name = RESOURCE_LABELS[res_name]
+        display_name = RESOURCE_LABELS.get(res_name, res_name)
         if res_name in max_caps:
             max_val = max_caps[res_name]
             text_str = f"{display_name}: {int(res_value)}/{int(max_val)}"
@@ -86,3 +86,60 @@ def draw_colonist_info(screen, font, colonists):
             line_surf = font.render(line, True, (255, 255, 255))
             screen.blit(line_surf, (x_start, y_offset))
             y_offset += 20
+    return y_offset
+
+def format_in_game_time(seconds):
+    # Convert in-game seconds to a user-friendly days/hours/min display
+    # seconds here are in-game seconds
+    days = seconds // 86400
+    remainder = seconds % 86400
+    hours = remainder // 3600
+    remainder = remainder % 3600
+    minutes = remainder // 60
+    
+    if days > 0:
+        return f"{days}d {hours:02d}:{minutes:02d}"
+    else:
+        return f"{hours:02d}:{minutes:02d}"
+
+def draw_modules_info(screen, font, modules, start_y):
+    x_start = 20
+    line_spacing = 20
+
+    title_surf = font.render("Module Status:", True, (255, 255, 255))
+    screen.blit(title_surf, (x_start, start_y))
+    start_y += line_spacing * 2
+
+    for module in modules:
+        mod_title = f"Module: {module.name} (Capacity: {module.capacity})"
+        mod_title_surf = font.render(mod_title, True, (255, 255, 0))
+        screen.blit(mod_title_surf, (x_start, start_y))
+        start_y += line_spacing
+
+        if hasattr(module, 'components'):
+            for comp in module.components:
+                comp_name = f"  Component: {comp.name}"
+                comp_oper = f"    Operational: {comp.operational}"
+                comp_cond = f"    Condition: {comp.condition:.2f}"
+
+                # Convert time_since_maintenance to in-game time format
+                # time_since_maintenance increments in real seconds (dt).
+                # Convert it to in-game seconds using TIME_SCALE.
+                in_game_maintenance_time = int(comp.time_since_maintenance * TIME_SCALE)
+                formatted_maint_time = format_in_game_time(in_game_maintenance_time)
+                
+                comp_maint = f"    Time Since Maintenance: {formatted_maint_time}"
+                comp_interval_in_game = int(comp.maintenance_interval * TIME_SCALE)
+                formatted_interval = format_in_game_time(comp_interval_in_game)
+                comp_interval = f"    Maintenance Interval: {formatted_interval}"
+
+                for info in [comp_name, comp_oper, comp_cond, comp_maint, comp_interval]:
+                    info_surf = font.render(info, True, (200, 200, 200))
+                    screen.blit(info_surf, (x_start, start_y))
+                    start_y += line_spacing
+        else:
+            no_comp_surf = font.render("  No components in this module.", True, (200, 200, 200))
+            screen.blit(no_comp_surf, (x_start, start_y))
+            start_y += line_spacing
+
+        start_y += line_spacing

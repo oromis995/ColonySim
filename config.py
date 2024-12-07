@@ -1,17 +1,14 @@
 # config.py
 
-# Comments updated: This file now only contains constants and resource labels.
-# All metabolic calculation functions have been moved to metabolism.py.
+# Comments updated: Removed static CO2 base rates.
+# All metabolic rates are now dynamically computed in metabolism.py based on person attributes.
 
 TIME_SCALE = 960
 
-SLEEP_TIME_100 = 86400
-HUNGER_TIME = 43200
-BATHROOM_TIME = 21600
-THIRST_TIME = 14400
-
-BASE_CO2_PER_GAME_SEC = 0.0003
-CO2_BASE_RATE_IRL = BASE_CO2_PER_GAME_SEC * TIME_SCALE
+SLEEP_TIME_100 = 86400   # Time for sleep need to fully saturate if never slept
+HUNGER_TIME = 43200      # Time for hunger need to fully saturate if never eaten
+BATHROOM_TIME = 21600    # Time for bathroom need to fully saturate if never relieved
+THIRST_TIME = 14400      # Time for thirst need to fully saturate if never drank
 
 RESOURCE_LABELS = {
     "Population": "Population",
@@ -44,4 +41,4 @@ INITIAL_SOLID_WASTE = 0.0
 INITIAL_LIQUID_WASTE = 0.0
 INITIAL_FE = 0.0
 
-CO2_SCRUB_RATE = 5.0  # ppm per tick reduction example rate
+CO2_SCRUB_RATE = 5.0  # ppm per tick reduction example

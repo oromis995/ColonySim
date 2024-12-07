@@ -1,14 +1,12 @@
 # game.py
 
-# Comments updated: No direct metabolic calculation here. Calls simulation functions that now rely on metabolism.py.
-
 import sys
 import pygame
 from pygame.locals import QUIT, VIDEORESIZE
 from config import (TIME_SCALE, INITIAL_POPULATION, INITIAL_O2, INITIAL_H2O, INITIAL_MEALS,
                     INITIAL_CO2, INITIAL_SOLID_WASTE, INITIAL_LIQUID_WASTE, INITIAL_FE)
 from simulation import update_simulation, end_of_day_update
-from ui import draw_top_bar, draw_simulation_time, draw_colonist_info
+from ui import draw_top_bar, draw_simulation_time, draw_colonist_info, draw_modules_info
 from entities.person import Person
 from entities.module import CoreModule, HabitationModule
 
@@ -111,7 +109,8 @@ class Game:
         self.screen.fill((34, 139, 34))
         draw_top_bar(self.screen, self.base_font, self.resources, self.max_caps)
         draw_simulation_time(self.screen, self.header_font, self.game_time, self.day_number)
-        draw_colonist_info(self.screen, self.base_font, self.colonists)
+        last_y = draw_colonist_info(self.screen, self.base_font, self.colonists)
+        draw_modules_info(self.screen, self.base_font, self.modules, last_y + 40)
         pygame.display.flip()
 
     def run(self):

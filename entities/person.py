@@ -1,7 +1,7 @@
 # entities/person.py
 
-# Comments updated: This file now defines Person as mostly a data holder.
-# Metabolic functions (happiness, O2 consumption, mortality checks) are moved to metabolism.py.
+# Comments updated: Person now only holds attributes.
+# Gender/age/weight will influence metabolic rates dynamically in metabolism.py.
 
 from config import BMI_THRESHOLD_MALE, BMI_THRESHOLD_FEMALE
 
@@ -21,7 +21,7 @@ class Person:
         self.assigned_bed = assigned_bed
         self.assigned_job = assigned_job
 
-        # Needs are now managed by metabolism.py
+        # Needs managed by metabolism.py
         self.thirst = 0.0
         self.bathroom_need = 0.0
         self.hunger = 0.0
@@ -30,6 +30,9 @@ class Person:
 
         self.days_without_job = 0
 
+        # Factors influencing metabolism
+        # NASA standards: physiological differences due to gender, weight, etc.
+        # Age factor can be incorporated if desired.
         self.aerobic_capacity = 1.0
         self.max_co2_tolerance = 1000.0
         self.o2_partial_pressure_range = (140.0, 300.0)
@@ -43,6 +46,5 @@ class Person:
         return f"{self.first_name} {self.last_name}"
 
     def bmi(self):
-        # Kept as a physical attribute calculation
         h_m = self.height / 100.0
         return self.weight / (h_m * h_m)

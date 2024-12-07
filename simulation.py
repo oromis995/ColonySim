@@ -1,7 +1,6 @@
 # simulation.py
 
-# Comments updated: Metabolic logic (increments, O2/CO2 calculations, end_of_day_update) moved to metabolism.py.
-# This file now just sets up environment and delegates metabolic updates to Metabolism.
+# Comments updated: Now fully relies on metabolism.py for dynamic metabolic calculations.
 
 from config import TIME_SCALE
 from entities.metabolism import Metabolism
@@ -18,7 +17,7 @@ def update_simulation(dt, colonists, resources, max_caps, modules):
         "o2_pp": 210.0
     }
 
-    # Now rely on Metabolism class for colonist updates
+    # Update colonists via dynamic metabolism
     metab.update_colonists(dt, colonists, resources)
 
     # Update Core Module components
