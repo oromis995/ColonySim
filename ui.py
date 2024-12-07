@@ -6,9 +6,10 @@
 # Similarly, clicking on a module name toggles showing its components.
 # Clicking on a component name toggles showing its maintenance details.
 # Added a central viewfinder with colonists walking around in an isometric environment.
+# Enhanced to scale based on window size and changed background color to black.
 
-import pygame
 import random
+import pygame
 from config import RESOURCE_LABELS, TIME_SCALE
 
 # Categories for organizing colonist info
@@ -19,19 +20,17 @@ COLONIST_INFO_CATEGORIES = {
     "Vitals": ["BMI", "Days Without Job", "Aerobic Capacity"]
 }
 
-# Viewfinder constants
-VIEWFINDER_WIDTH = 400
-VIEWFINDER_HEIGHT = 400
-ISOMETRIC_TILE_WIDTH = 40
-ISOMETRIC_TILE_HEIGHT = 20
+# Viewfinder constants (will be scaled based on window size)
+ISOMETRIC_TILE_WIDTH_RATIO = 0.05  # Ratio of window width
+ISOMETRIC_TILE_HEIGHT_RATIO = 0.025  # Ratio of window height
 GRID_SIZE_X = 10
 GRID_SIZE_Y = 10
 COLONIST_COLOR = (0, 255, 0)  # Green color for colonists
-COLONIST_MOVE_SPEED = 0.05  # Tiles per millisecond for smooth movement
+COLONIST_MOVE_SPEED_RATIO = 0.00005  # Tiles per millisecond for smooth movement
 
-def draw_top_bar(screen, base_font, resources, max_caps):
-    top_bar_height = 50
-    pygame.draw.rect(screen, (0, 0, 0), (0, 0, screen.get_width(), top_bar_height))
+def draw_top_bar(screen, base_font, resources, max_caps, window_width, window_height):
+    top_bar_height = int(window_height * 0.08)  # 8% of window height
+    pygame.draw.rect(screen, (0, 0, 0), (0, 0, window_width, top_bar_height))
 
     texts = []
     for res_name, res_value in resources.items():
@@ -43,37 +42,39 @@ def draw_top_bar(screen, base_font, resources, max_caps):
             text_str = f"{display_name}: {int(res_value)}"
         texts.append(text_str)
 
-    current_size = base_font.get_height()
+    # Adjust font size based on window height
+    current_size = max(int(window_height * 0.02), 10)  # 2% of window height or at least 10
     min_size = 10
 
     def total_width_for_font_size(size):
         test_font = pygame.font.SysFont("DejaVu Sans", size)
-        total_w = 20
+        total_w = int(window_width * 0.025)  # Initial padding
         for txt in texts:
-            text_surf = test_font.render(txt, True, (255,255,255))
-            total_w += text_surf.get_width() + 50
+            text_surf = test_font.render(txt, True, (255, 255, 255))
+            total_w += text_surf.get_width() + int(window_width * 0.06)  # Spacing
         return total_w
 
-    screen_w = screen.get_width()
     size = current_size
-    while total_width_for_font_size(size) > screen_w and size > min_size:
+    while total_width_for_font_size(size) > window_width and size > min_size:
         size -= 1
 
     font = pygame.font.SysFont("DejaVu Sans", size)
-    x = 20
+    x = int(window_width * 0.025)  # 2.5% of window width
     y = top_bar_height // 2
     for txt in texts:
-        text_surf = font.render(txt, True, (255,255,255))
+        text_surf = font.render(txt, True, (255, 255, 255))
         text_rect = text_surf.get_rect(midleft=(x, y))
         screen.blit(text_surf, text_rect)
-        x += text_surf.get_width() + 50
+        x += text_surf.get_width() + int(window_width * 0.06)  # Spacing
 
-def draw_simulation_time(screen, header_font, game_time, day_number):
+def draw_simulation_time(screen, header_font, game_time, day_number, window_width, window_height):
     hours = (int(game_time) // 3600) % 24
     minutes = (int(game_time) % 3600) // 60
     time_str = f"Day {day_number}, Time: {hours:02d}:{minutes:02d}"
     time_surf = header_font.render(time_str, True, (255, 255, 255))
-    screen.blit(time_surf, (20, 60))
+    time_x = int(window_width * 0.025)  # 2.5% of window width
+    time_y = int(window_height * 0.09)  # Positioned below top bar (8%) plus 1%
+    screen.blit(time_surf, (time_x, time_y))
 
 def format_in_game_time(seconds):
     days = seconds // 86400
@@ -87,13 +88,17 @@ def format_in_game_time(seconds):
     else:
         return f"{hours:02d}:{minutes:02d}"
 
-def draw_colonists_section(screen, font, colonists, ui_states, x_start=20, start_y=100, line_spacing=20):
+def draw_colonists_section(screen, font, colonists, ui_states, window_width, window_height):
     """
     Draw colonists as dropdowns. Clicking on a colonist's name toggles their details.
     Within a colonist's details, categories are shown as dropdowns.
     Returns a list of clickable rects and associated actions.
     """
     clickable_areas = []
+
+    x_start = int(window_width * 0.02)  # 2% of window width
+    start_y = int(window_height * 0.12)  # Start below top bar and simulation time
+    line_spacing = int(window_height * 0.02)  # 2% of window height
 
     title_surf = font.render("Colonists:", True, (255, 255, 255))
     screen.blit(title_surf, (x_start, start_y))
@@ -172,12 +177,16 @@ def get_colonist_info_lines(colonist):
     }
     return info
 
-def draw_modules_section(screen, font, modules, ui_states, x_start=20, start_y=0, line_spacing=20):
+def draw_modules_section(screen, font, modules, ui_states, window_width, window_height):
     """
     Draw modules as dropdowns. Clicking on a module toggles its components.
     Clicking on a component toggles its maintenance details.
     """
     clickable_areas = []
+
+    x_start = int(window_width * 0.02)  # 2% of window width
+    start_y = int(window_height * 0.55)  # Start lower on the screen
+    line_spacing = int(window_height * 0.02)  # 2% of window height
 
     title_surf = font.render("Modules:", True, (255, 255, 255))
     screen.blit(title_surf, (x_start, start_y))
@@ -206,7 +215,7 @@ def draw_modules_section(screen, font, modules, ui_states, x_start=20, start_y=0
 
                     if ui_states["components_expanded"].get((module.name, comp.name), False):
                         # Show component details
-                        comp_lines = get_component_info_lines(comp)
+                        comp_lines = get_component_info_lines(comp, window_width, window_height)
                         for cl in comp_lines:
                             cl_surf = font.render("       " + cl, True, (220, 220, 220))
                             screen.blit(cl_surf, (x_start, start_y))
@@ -219,7 +228,7 @@ def draw_modules_section(screen, font, modules, ui_states, x_start=20, start_y=0
 
     return clickable_areas
 
-def get_component_info_lines(comp):
+def get_component_info_lines(comp, window_width, window_height):
     in_game_maintenance_time = int(comp.time_since_maintenance * TIME_SCALE)
     formatted_maint_time = format_in_game_time(in_game_maintenance_time)
     comp_interval_in_game = int(comp.maintenance_interval * TIME_SCALE)
@@ -259,31 +268,31 @@ def handle_ui_click(pos, ui_states, clickable_areas):
             return True
     return False
 
-def grid_to_screen(x, y, origin_x, origin_y):
+def grid_to_screen(x, y, origin_x, origin_y, tile_width, tile_height):
     """
     Convert grid coordinates to isometric screen coordinates.
     """
-    screen_x = (x - y) * (ISOMETRIC_TILE_WIDTH // 2) + origin_x
-    screen_y = (x + y) * (ISOMETRIC_TILE_HEIGHT // 2) + origin_y
+    screen_x = (x - y) * (tile_width // 2) + origin_x
+    screen_y = (x + y) * (tile_height // 2) + origin_y
     return (screen_x, screen_y)
 
-def draw_isometric_grid(screen, origin_x, origin_y):
+def draw_isometric_grid(screen, origin_x, origin_y, tile_width, tile_height, grid_size_x, grid_size_y):
     """
     Draw an isometric grid.
     """
-    for x in range(GRID_SIZE_X):
-        for y in range(GRID_SIZE_Y):
-            tile_x, tile_y = grid_to_screen(x, y, origin_x, origin_y)
+    for x in range(grid_size_x):
+        for y in range(grid_size_y):
+            tile_x, tile_y = grid_to_screen(x, y, origin_x, origin_y, tile_width, tile_height)
             # Define the four corners of the diamond (isometric tile)
             points = [
                 (tile_x, tile_y),
-                (tile_x + ISOMETRIC_TILE_WIDTH // 2, tile_y + ISOMETRIC_TILE_HEIGHT // 2),
-                (tile_x, tile_y + ISOMETRIC_TILE_HEIGHT),
-                (tile_x - ISOMETRIC_TILE_WIDTH // 2, tile_y + ISOMETRIC_TILE_HEIGHT // 2)
+                (tile_x + tile_width // 2, tile_y + tile_height // 2),
+                (tile_x, tile_y + tile_height),
+                (tile_x - tile_width // 2, tile_y + tile_height // 2)
             ]
             pygame.draw.polygon(screen, (169, 169, 169), points, 1)
 
-def draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time):
+def draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time, tile_width, tile_height, move_speed):
     """
     Draw a colonist at their current position with smooth movement.
     """
@@ -319,7 +328,7 @@ def draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time):
         dy = target_y - current_y
         distance = (dx**2 + dy**2) ** 0.5
         if distance != 0:
-            move_step = COLONIST_MOVE_SPEED
+            move_step = move_speed  # tiles per millisecond
             move_x = dx / distance * move_step
             move_y = dy / distance * move_step
             new_x = current_x + move_x
@@ -341,31 +350,36 @@ def draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time):
                 ui_states['colonist_states'][colonist.name] = colonist_state
 
     # Convert current position to screen coordinates
-    screen_x, screen_y = grid_to_screen(current_pos[0], current_pos[1], origin_x, origin_y)
+    screen_x, screen_y = grid_to_screen(current_pos[0], current_pos[1], origin_x, origin_y, tile_width, tile_height)
     # Draw colonist as a circle
-    pygame.draw.circle(screen, COLONIST_COLOR, (int(screen_x), int(screen_y)), 8)
+    pygame.draw.circle(screen, COLONIST_COLOR, (int(screen_x), int(screen_y)), max(int(tile_width * 0.2), 4))
 
-def draw_viewfinder(screen, ui_states, game_time, colonists):
+def draw_viewfinder(screen, ui_states, game_time, colonists, window_width, window_height):
     """
     Draw the central viewfinder with the isometric environment and colonists.
     """
     # Define viewfinder position (center of the screen)
-    screen_width, screen_height = screen.get_size()
-    viewfinder_x = (screen_width - VIEWFINDER_WIDTH) // 2
-    viewfinder_y = (screen_height - VIEWFINDER_HEIGHT) // 2
-    viewfinder_rect = pygame.Rect(viewfinder_x, viewfinder_y, VIEWFINDER_WIDTH, VIEWFINDER_HEIGHT)
-    
+    viewfinder_width = int(window_width * 0.5)  # 50% of window width
+    viewfinder_height = int(window_height * 0.8)  # 80% of window height
+    viewfinder_x = (window_width - viewfinder_width) // 2
+    viewfinder_y = (window_height - viewfinder_height) // 2
+    viewfinder_rect = pygame.Rect(viewfinder_x, viewfinder_y, viewfinder_width, viewfinder_height)
+
     # Draw background for viewfinder
     pygame.draw.rect(screen, (0, 0, 0), viewfinder_rect)
     pygame.draw.rect(screen, (255, 255, 255), viewfinder_rect, 2)  # border
-    
+
     # Calculate origin for isometric grid
-    origin_x = viewfinder_x + VIEWFINDER_WIDTH // 2
-    origin_y = viewfinder_y + 50  # some padding from top
-    
+    origin_x = viewfinder_x + viewfinder_width // 2
+    origin_y = viewfinder_y + int(viewfinder_height * 0.1)  # 10% padding from top
+
+    # Calculate tile sizes based on viewfinder size
+    tile_width = int(window_width * ISOMETRIC_TILE_WIDTH_RATIO)
+    tile_height = int(window_height * ISOMETRIC_TILE_HEIGHT_RATIO)
+
     # Draw isometric grid
-    draw_isometric_grid(screen, origin_x, origin_y)
-    
+    draw_isometric_grid(screen, origin_x, origin_y, tile_width, tile_height, GRID_SIZE_X, GRID_SIZE_Y)
+
     # Initialize colonist states if not present
     if 'colonist_states' not in ui_states:
         ui_states['colonist_states'] = {}
@@ -378,7 +392,10 @@ def draw_viewfinder(screen, ui_states, game_time, colonists):
                 'moving': False,
                 'last_update_time': game_time
             }
-    
+
+    # Calculate movement speed based on window size
+    move_speed = window_width * COLONIST_MOVE_SPEED_RATIO  # tiles per millisecond
+
     # Update and draw each colonist
     for colonist in colonists:
         if not getattr(colonist, 'is_alive', True):
@@ -386,25 +403,26 @@ def draw_viewfinder(screen, ui_states, game_time, colonists):
             if colonist.name in ui_states['colonist_states']:
                 del ui_states['colonist_states'][colonist.name]
             continue
-        draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time)
-    
+        draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time, tile_width, tile_height, move_speed)
+
     pygame.display.flip()
 
 def draw_ui(screen, base_font, header_font, resources, max_caps, game_time, day_number, colonists, modules, ui_states):
-    screen.fill((34, 139, 34))
-    draw_top_bar(screen, base_font, resources, max_caps)
-    draw_simulation_time(screen, header_font, game_time, day_number)
+    window_width, window_height = screen.get_size()
+    screen.fill((0, 0, 0))  # Changed background color to black
+    draw_top_bar(screen, base_font, resources, max_caps, window_width, window_height)
+    draw_simulation_time(screen, header_font, game_time, day_number, window_width, window_height)
 
     clickable_areas = []
     # Draw colonists section
-    colonist_areas, last_y = draw_colonists_section(screen, base_font, colonists, ui_states, start_y=100)
+    colonist_areas, last_y = draw_colonists_section(screen, base_font, colonists, ui_states, window_width, window_height)
     clickable_areas.extend(colonist_areas)
 
     # Draw modules section below colonists
-    module_areas = draw_modules_section(screen, base_font, modules, ui_states, start_y=last_y+40)
+    module_areas = draw_modules_section(screen, base_font, modules, ui_states, window_width, window_height)
     clickable_areas.extend(module_areas)
 
     # Draw central viewfinder with colonists
-    draw_viewfinder(screen, ui_states, game_time, colonists)
+    draw_viewfinder(screen, ui_states, game_time, colonists, window_width, window_height)
 
     return clickable_areas
