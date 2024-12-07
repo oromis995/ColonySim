@@ -2,11 +2,11 @@
 
 import sys
 import pygame
-from pygame.locals import QUIT, VIDEORESIZE
+from pygame.locals import QUIT, VIDEORESIZE, MOUSEBUTTONDOWN
 from config import (TIME_SCALE, INITIAL_POPULATION, INITIAL_O2, INITIAL_H2O, INITIAL_MEALS,
                     INITIAL_CO2, INITIAL_SOLID_WASTE, INITIAL_LIQUID_WASTE, INITIAL_FE)
 from simulation import update_simulation, end_of_day_update
-from ui import draw_top_bar, draw_simulation_time, draw_colonist_info, draw_modules_info
+from ui import draw_ui, handle_ui_click
 from entities.person import Person
 from entities.module import CoreModule, HabitationModule
 
@@ -74,6 +74,14 @@ class Game:
             "Liquid Waste": max_liquid
         }
 
+        # UI states for dropdowns
+        self.ui_states = {
+            "colonists_expanded": {},
+            "colonist_categories_expanded": {},
+            "modules_expanded": {},
+            "components_expanded": {}
+        }
+
     def get_current_day(self):
         total_seconds = int(self.game_time)
         return total_seconds // 86400
@@ -85,6 +93,12 @@ class Game:
             elif event.type == VIDEORESIZE:
                 width, height = event.size
                 self.screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
+            elif event.type == MOUSEBUTTONDOWN and event.button == 1:
+                # Handle UI clicks
+                handled = handle_ui_click(event.pos, self.ui_states, self.clickable_areas)
+                if handled:
+                    # Redraw immediately after state change
+                    self.draw(force_redraw=True)
 
     def run_simulation(self, dt):
         self.simulation_time += dt
@@ -105,13 +119,20 @@ class Game:
             else:
                 c.days_without_job = 0
 
-    def draw(self):
-        self.screen.fill((34, 139, 34))
-        draw_top_bar(self.screen, self.base_font, self.resources, self.max_caps)
-        draw_simulation_time(self.screen, self.header_font, self.game_time, self.day_number)
-        last_y = draw_colonist_info(self.screen, self.base_font, self.colonists)
-        draw_modules_info(self.screen, self.base_font, self.modules, last_y + 40)
-        pygame.display.flip()
+    def draw(self, force_redraw=False):
+        # draw_ui returns the clickable areas
+        self.clickable_areas = draw_ui(
+            self.screen, 
+            self.base_font, 
+            self.header_font, 
+            self.resources, 
+            self.max_caps, 
+            self.game_time, 
+            self.day_number, 
+            self.colonists, 
+            self.modules, 
+            self.ui_states
+        )
 
     def run(self):
         while self.running:
