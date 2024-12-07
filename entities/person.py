@@ -8,7 +8,7 @@ from config import BMI_THRESHOLD_MALE, BMI_THRESHOLD_FEMALE
 class Person:
     def __init__(self, first_name, last_name, gender, age, career,
                  weight=70.0, height=170.0, hair_color="Brown",
-                 assigned_bed=False, assigned_job=False):
+                 assigned_bed=False, assigned_job=False, position=(0,0)):
         self.first_name = first_name
         self.last_name = last_name
         self.gender = gender
@@ -17,7 +17,7 @@ class Person:
         self.weight = weight
         self.height = height
         self.hair_color = hair_color
-
+        self.position = (0,0)
         self.assigned_bed = assigned_bed
         self.assigned_job = assigned_job
 

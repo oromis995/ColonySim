@@ -1,6 +1,6 @@
 # entities/components.py
 
-import random
+
 
 class Component:
     def __init__(self, name):

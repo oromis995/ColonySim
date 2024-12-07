@@ -5,8 +5,10 @@
 # Clicking on an info category toggles showing detailed info for that category.
 # Similarly, clicking on a module name toggles showing its components.
 # Clicking on a component name toggles showing its maintenance details.
+# Added a central viewfinder with colonists walking around in an isometric environment.
 
 import pygame
+import random
 from config import RESOURCE_LABELS, TIME_SCALE
 
 # Categories for organizing colonist info
@@ -16,6 +18,16 @@ COLONIST_INFO_CATEGORIES = {
     "Environment Preferences": ["Max CO2 Tolerance", "O2 Partial Pressure Range", "Pressure Tolerance", "RH Preference", "Temp Preference"],
     "Vitals": ["BMI", "Days Without Job", "Aerobic Capacity"]
 }
+
+# Viewfinder constants
+VIEWFINDER_WIDTH = 400
+VIEWFINDER_HEIGHT = 400
+ISOMETRIC_TILE_WIDTH = 40
+ISOMETRIC_TILE_HEIGHT = 20
+GRID_SIZE_X = 10
+GRID_SIZE_Y = 10
+COLONIST_COLOR = (0, 255, 0)  # Green color for colonists
+COLONIST_MOVE_SPEED = 0.05  # Tiles per millisecond for smooth movement
 
 def draw_top_bar(screen, base_font, resources, max_caps):
     top_bar_height = 50
@@ -69,7 +81,7 @@ def format_in_game_time(seconds):
     hours = remainder // 3600
     remainder = remainder % 3600
     minutes = remainder // 60
-    
+
     if days > 0:
         return f"{days}d {hours:02d}:{minutes:02d}"
     else:
@@ -88,6 +100,9 @@ def draw_colonists_section(screen, font, colonists, ui_states, x_start=20, start
     start_y += line_spacing * 2
 
     for colonist in colonists:
+        if not getattr(colonist, 'is_alive', True):
+            continue  # Skip dead colonists
+
         c_name = f"{colonist.name}"
         color = (255, 255, 0)
         # Indicate expanded or collapsed
@@ -130,7 +145,7 @@ def get_colonist_info_lines(colonist):
     thirst_pct = int(colonist.thirst * 100)
     bathroom_pct = int(colonist.bathroom_need * 100)
     sleep_pct = int(colonist.sleep_need * 100)
-    
+
     info = {
         "Name": colonist.name,
         "Gender": colonist.gender,
@@ -179,7 +194,7 @@ def draw_modules_section(screen, font, modules, ui_states, x_start=20, start_y=0
 
         if ui_states["modules_expanded"].get(module.name, False):
             # Show components if any
-            if hasattr(module, 'components'):
+            if hasattr(module, 'components') and module.components:
                 for comp in module.components:
                     comp_prefix = "-" if ui_states["components_expanded"].get((module.name, comp.name), False) else "+"
                     comp_line = f"   {comp_prefix} {comp.name}"
@@ -244,6 +259,137 @@ def handle_ui_click(pos, ui_states, clickable_areas):
             return True
     return False
 
+def grid_to_screen(x, y, origin_x, origin_y):
+    """
+    Convert grid coordinates to isometric screen coordinates.
+    """
+    screen_x = (x - y) * (ISOMETRIC_TILE_WIDTH // 2) + origin_x
+    screen_y = (x + y) * (ISOMETRIC_TILE_HEIGHT // 2) + origin_y
+    return (screen_x, screen_y)
+
+def draw_isometric_grid(screen, origin_x, origin_y):
+    """
+    Draw an isometric grid.
+    """
+    for x in range(GRID_SIZE_X):
+        for y in range(GRID_SIZE_Y):
+            tile_x, tile_y = grid_to_screen(x, y, origin_x, origin_y)
+            # Define the four corners of the diamond (isometric tile)
+            points = [
+                (tile_x, tile_y),
+                (tile_x + ISOMETRIC_TILE_WIDTH // 2, tile_y + ISOMETRIC_TILE_HEIGHT // 2),
+                (tile_x, tile_y + ISOMETRIC_TILE_HEIGHT),
+                (tile_x - ISOMETRIC_TILE_WIDTH // 2, tile_y + ISOMETRIC_TILE_HEIGHT // 2)
+            ]
+            pygame.draw.polygon(screen, (169, 169, 169), points, 1)
+
+def draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time):
+    """
+    Draw a colonist at their current position with smooth movement.
+    """
+    colonist_state = ui_states['colonist_states'].get(colonist.name, {})
+    current_pos = colonist_state.get('current_position', (colonist.position[0], colonist.position[1]))
+    target_pos = colonist_state.get('target_position', (colonist.position[0], colonist.position[1]))
+    moving = colonist_state.get('moving', False)
+    last_update_time = colonist_state.get('last_update_time', game_time)
+
+    if not moving:
+        # Choose a new target position
+        possible_moves = []
+        x, y = target_pos
+        if x > 0:
+            possible_moves.append((x - 1, y))
+        if x < GRID_SIZE_X - 1:
+            possible_moves.append((x + 1, y))
+        if y > 0:
+            possible_moves.append((x, y - 1))
+        if y < GRID_SIZE_Y - 1:
+            possible_moves.append((x, y + 1))
+        if possible_moves:
+            new_target = random.choice(possible_moves)
+            colonist_state['target_position'] = new_target
+            colonist_state['moving'] = True
+            colonist_state['last_update_time'] = game_time
+            ui_states['colonist_states'][colonist.name] = colonist_state
+    else:
+        # Move towards target position smoothly
+        current_x, current_y = current_pos
+        target_x, target_y = target_pos
+        dx = target_x - current_x
+        dy = target_y - current_y
+        distance = (dx**2 + dy**2) ** 0.5
+        if distance != 0:
+            move_step = COLONIST_MOVE_SPEED
+            move_x = dx / distance * move_step
+            move_y = dy / distance * move_step
+            new_x = current_x + move_x
+            new_y = current_y + move_y
+
+            # Check if reached or passed the target
+            if (dx > 0 and new_x >= target_x) or (dx < 0 and new_x <= target_x):
+                new_x = target_x
+            if (dy > 0 and new_y >= target_y) or (dy < 0 and new_y <= target_y):
+                new_y = target_y
+
+            colonist_state['current_position'] = (new_x, new_y)
+            ui_states['colonist_states'][colonist.name] = colonist_state
+
+            # If reached target, stop moving
+            if (new_x, new_y) == target_pos:
+                colonist_state['moving'] = False
+                colonist_state['last_update_time'] = game_time
+                ui_states['colonist_states'][colonist.name] = colonist_state
+
+    # Convert current position to screen coordinates
+    screen_x, screen_y = grid_to_screen(current_pos[0], current_pos[1], origin_x, origin_y)
+    # Draw colonist as a circle
+    pygame.draw.circle(screen, COLONIST_COLOR, (int(screen_x), int(screen_y)), 8)
+
+def draw_viewfinder(screen, ui_states, game_time, colonists):
+    """
+    Draw the central viewfinder with the isometric environment and colonists.
+    """
+    # Define viewfinder position (center of the screen)
+    screen_width, screen_height = screen.get_size()
+    viewfinder_x = (screen_width - VIEWFINDER_WIDTH) // 2
+    viewfinder_y = (screen_height - VIEWFINDER_HEIGHT) // 2
+    viewfinder_rect = pygame.Rect(viewfinder_x, viewfinder_y, VIEWFINDER_WIDTH, VIEWFINDER_HEIGHT)
+    
+    # Draw background for viewfinder
+    pygame.draw.rect(screen, (0, 0, 0), viewfinder_rect)
+    pygame.draw.rect(screen, (255, 255, 255), viewfinder_rect, 2)  # border
+    
+    # Calculate origin for isometric grid
+    origin_x = viewfinder_x + VIEWFINDER_WIDTH // 2
+    origin_y = viewfinder_y + 50  # some padding from top
+    
+    # Draw isometric grid
+    draw_isometric_grid(screen, origin_x, origin_y)
+    
+    # Initialize colonist states if not present
+    if 'colonist_states' not in ui_states:
+        ui_states['colonist_states'] = {}
+        for colonist in colonists:
+            if not getattr(colonist, 'is_alive', True):
+                continue
+            ui_states['colonist_states'][colonist.name] = {
+                'current_position': (colonist.position[0], colonist.position[1]),
+                'target_position': (colonist.position[0], colonist.position[1]),
+                'moving': False,
+                'last_update_time': game_time
+            }
+    
+    # Update and draw each colonist
+    for colonist in colonists:
+        if not getattr(colonist, 'is_alive', True):
+            # Remove colonist from states if dead
+            if colonist.name in ui_states['colonist_states']:
+                del ui_states['colonist_states'][colonist.name]
+            continue
+        draw_colonist(screen, colonist, origin_x, origin_y, ui_states, game_time)
+    
+    pygame.display.flip()
+
 def draw_ui(screen, base_font, header_font, resources, max_caps, game_time, day_number, colonists, modules, ui_states):
     screen.fill((34, 139, 34))
     draw_top_bar(screen, base_font, resources, max_caps)
@@ -258,5 +404,7 @@ def draw_ui(screen, base_font, header_font, resources, max_caps, game_time, day_
     module_areas = draw_modules_section(screen, base_font, modules, ui_states, start_y=last_y+40)
     clickable_areas.extend(module_areas)
 
-    pygame.display.flip()
+    # Draw central viewfinder with colonists
+    draw_viewfinder(screen, ui_states, game_time, colonists)
+
     return clickable_areas
