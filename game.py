@@ -1,4 +1,7 @@
 # game.py
+
+# Comments updated: No direct metabolic calculation here. Calls simulation functions that now rely on metabolism.py.
+
 import sys
 import pygame
 from pygame.locals import QUIT, VIDEORESIZE
@@ -21,7 +24,7 @@ class Game:
 
         self.modules = [
             CoreModule(),
-            HabitationModule()  # Not used
+            HabitationModule()
         ]
         core = self.modules[0]
 
@@ -52,7 +55,6 @@ class Game:
             "Fe": Fe
         }
 
-        # Alice is now 20
         self.colonists = [
             Person(first_name="Alice", last_name="Smith", gender="F", age=20, career="Eng", weight=70.0, height=170.0, hair_color="Red", assigned_bed=False, assigned_job=False)
         ]

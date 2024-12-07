@@ -1,5 +1,8 @@
 # config.py
 
+# Comments updated: This file now only contains constants and resource labels.
+# All metabolic calculation functions have been moved to metabolism.py.
+
 TIME_SCALE = 960
 
 SLEEP_TIME_100 = 86400
@@ -7,19 +10,8 @@ HUNGER_TIME = 43200
 BATHROOM_TIME = 21600
 THIRST_TIME = 14400
 
-def need_increment_per_irl_sec(in_game_time_for_100):
-    return (1.0 / in_game_time_for_100) * TIME_SCALE
-
-THIRST_INC = need_increment_per_irl_sec(THIRST_TIME)
-BATHROOM_INC = need_increment_per_irl_sec(BATHROOM_TIME)
-HUNGER_INC = need_increment_per_irl_sec(HUNGER_TIME)
-SLEEP_INC = need_increment_per_irl_sec(SLEEP_TIME_100)
-
 BASE_CO2_PER_GAME_SEC = 0.0003
 CO2_BASE_RATE_IRL = BASE_CO2_PER_GAME_SEC * TIME_SCALE
-
-def co2_ppm_increase_per_irl_second(weight):
-    return (weight / 70.0) * CO2_BASE_RATE_IRL
 
 RESOURCE_LABELS = {
     "Population": "Population",
@@ -52,5 +44,4 @@ INITIAL_SOLID_WASTE = 0.0
 INITIAL_LIQUID_WASTE = 0.0
 INITIAL_FE = 0.0
 
-# New constants for co2 scrubber
-CO2_SCRUB_RATE = 5.0  # ppm per tick reduction just as example
+CO2_SCRUB_RATE = 5.0  # ppm per tick reduction example rate
