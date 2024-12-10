@@ -1,0 +1,54 @@
+{
+    "window": {
+      "bg_color": [25, 25, 25],
+      "width": 800,
+      "height": 600,
+      "caption": "Colony Sim",
+      "pan_speed": 5,
+      "initial_scale": 1.0,
+      "min_scale": 0.1,
+      "max_scale": 5.0,
+      "zoom_step": 0.1
+    },
+    "gui": {
+      "scale_text_color": [255, 255, 255],
+      "scale_x_pos": 10,
+      "scale_y_pos": 10,
+      "font_size": 24,
+      "font": ""
+    },
+    "grid": {
+      "base_grid_spacing": 50,
+      "grid_color": [50, 50, 50]
+    },
+    "time": {
+      "time_scale": 960,
+      "sleep": 86400,
+      "hunger": 43200,
+      "bathroom": 21600,
+      "thirst": 14400
+    },
+    "penalties": {
+      "thirst": 0.4,
+      "bathroom": 0.3,
+      "hunger": 0.2,
+      "sleep": 0.3,
+      "jobless": 0.05,
+      "bedless": 0.1
+    },
+    "bmi": {
+      "threshold_male": 13.0,
+      "threshold_female": 11.0,
+      "daily_weight_loss_rate": 0.005
+    },
+    "initial_resources": {
+      "population": 1,
+      "o2": 4000.0,
+      "h2o": 1200.0,
+      "meals": 100.0,
+      "co2": 400.0,
+      "solid_waste": 0.0,
+      "liquid_waste": 0.0
+    }
+  }
+  

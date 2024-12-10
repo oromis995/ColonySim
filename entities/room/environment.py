@@ -1,0 +1,3 @@
+
+class EnvironmentalConditions():
+    pass

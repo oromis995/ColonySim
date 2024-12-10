@@ -8,7 +8,7 @@ from config import (TIME_SCALE, SLEEP_TIME_100, HUNGER_TIME, BATHROOM_TIME, THIR
                     JOBLESS_PENALTY, NO_BED_PENALTY, DAILY_WEIGHT_LOSS_RATE,
                     BMI_THRESHOLD_MALE, BMI_THRESHOLD_FEMALE)
 
-class Metabolism:
+class Metabolism():
     def __init__(self):
         # Precompute increments per IRL second
         self.thirst_inc = self.need_increment_per_irl_sec(THIRST_TIME)
@@ -82,7 +82,7 @@ class Metabolism:
         else:
             return current_bmi < BMI_THRESHOLD_FEMALE
 
-    def adjust_colonist_resources(self, person, dt, resources):
+    def adjust_crew_resources(self, person, dt, resources):
         # O2 consumption:
         daily_o2 = self.daily_o2_consumption(person)
         o2_per_day = daily_o2  # L/day
@@ -102,25 +102,114 @@ class Metabolism:
         co2_produced = co2_per_game_sec * (dt * TIME_SCALE)
         resources["CO2"] += co2_produced
 
-    def update_colonists(self, dt, colonists, resources):
-        # Update all colonists for this tick
-        for c in colonists:
+    def update_crew(self, dt, crew, resources):
+        # Update all crew for this tick
+        for c in crew:
             self.update_person_needs(c, dt)
             self.update_happiness(c)
-            self.adjust_colonist_resources(c, dt, resources)
+            self.adjust_crew_resources(c, dt, resources)
 
-    def end_of_day_update(self, colonists, resources):
+    def end_of_day_update(self, crew, resources):
         # Check for mortality due to extreme sleep deprivation
-        for c in colonists[:]:
+        for c in crew[:]:
             if c.sleep_need >= 3.0:
-                colonists.remove(c)
+                crew.remove(c)
                 resources["Population"] = max(0, resources["Population"] - 1)
 
         # Check for starvation/low BMI mortality
-        for c in colonists[:]:
+        for c in crew[:]:
             if c.hunger >= 1.0:
                 c.weight = c.weight * (1.0 - DAILY_WEIGHT_LOSS_RATE)
                 if self.check_mortality(c):
-                    # Remove colonist who died from starvation (low BMI)
-                    colonists.remove(c)
+                    # Remove crew who died from starvation (low BMI)
+                    crew.remove(c)
                     resources["Population"] = max(0, resources["Population"] - 1)
+                    
+    def bmi(self):
+        h_m = self.height / 100.0
+        return self.weight / (h_m * h_m)
+    
+
+
+class Metabolism():
+    def __init__(self, weight_kg, height_m, age, gender, activity_level):
+        """
+        Initialize with basic user data.
+        :param weight_kg: Weight in kilograms
+        :param height_m: Height in meters
+        :param age: Age in years
+        :param gender: 'male' or 'female'
+        :param activity_level: METs (e.g., Sedentary 1.2, Light 2.0, Moderate 3.0, Vigorous 5.0+)
+        """
+        self.weight_kg = weight_kg
+        self.height_m = height_m
+        self.age = age
+        self.gender = gender.lower()
+        self.activity_level = activity_level
+
+
+    def resting_heart_rate(self):
+        """
+        Estimate resting heart rate (RHR) based on gender and age.
+        :return: Resting heart rate in beats per minute.
+        """
+        if self.gender == 'male':
+            return max(60, 70 - 0.5 * self.age)
+        elif self.gender == 'female':
+            return max(65, 75 - 0.5 * self.age)
+        else:
+            raise ValueError("Gender must be 'male' or 'female'.")
+
+    def activity_heart_rate(self):
+        """
+        Calculate heart rate during activity using METs and adjusted BMI.
+        Formula derived from METs and estimated VO2-to-heart rate relationship:
+        HR = RHR + METs * 10 * (BMI / body_fitness_factor)
+        :return: Heart rate during activity in beats per minute.
+        """
+        rhr = self.resting_heart_rate()
+        adjusted_bmi = self.bmi()
+        body_fitness_factor = 22 if self.gender == 'male' else 20  # Slightly higher for males
+        heart_rate = rhr + self.activity_level * 10 * (adjusted_bmi / body_fitness_factor)
+        return round(heart_rate)
+
+    def vo2_max(self):
+        """
+        Estimate VO2 max using heart rate and gender.
+        :return: VO2 max in mL/(kg·min).
+        """
+        max_hr = 220 - self.age
+        rhr = self.resting_heart_rate()
+        if self.gender == 'male':
+            vo2_max = 15.3 * (max_hr / rhr)
+        elif self.gender == 'female':
+            vo2_max = 14.7 * (max_hr / rhr)
+        else:
+            raise ValueError("Gender must be 'male' or 'female'.")
+        return vo2_max
+
+    def activity_vo2(self):
+        """
+        Estimate VO2 during activity based on METs.
+        :return: VO2 during activity in mL/(kg·min).
+        """
+        return self.activity_level * 3.5  # METs to VO2 conversion: 1 MET = 3.5 mL/(kg·min)
+
+# Example Usage
+if __name__ == "__main__":
+    # User input
+    weight_kg = 70  # Example weight in kilograms
+    height_m = 1.75  # Example height in meters
+    age = 30         # Example age
+    gender = "male"  # 'male' or 'female'
+    activity_level = 3.0  # Moderate activity (METs)
+
+    # Initialize calculator
+    calculator = Metabolism(weight_kg, height_m, age, gender, activity_level)
+
+    # Outputs
+    print("Adjusted BMI:", calculator.bmi())
+    print("Resting Heart Rate (RHR):", calculator.resting_heart_rate(), "bpm")
+    print("Heart Rate during Activity:", calculator.activity_heart_rate(), "bpm")
+    print("VO2 Max:", calculator.vo2_max(), "mL/(kg·min)")
+    print("VO2 during Current Activity:", calculator.activity_vo2(), "mL/(kg·min)")
