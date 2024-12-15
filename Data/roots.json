@@ -1,0 +1,175 @@
+{
+  "Saxon-Latin Roots": [
+    {
+      "Root": "Ald-",
+      "Meaning": "Old or ancient (Saxon)"
+    },
+    {
+      "Root": "Lux-",
+      "Meaning": "Light (Latin)"
+    },
+    {
+      "Root": "Reg-",
+      "Meaning": "King, rule (Latin)"
+    },
+    {
+      "Root": "Wil-",
+      "Meaning": "Will, desire (Saxon)"
+    },
+    {
+      "Root": "Bell-",
+      "Meaning": "Beautiful, fair (Latin)"
+    },
+    {
+      "Root": "Mar-",
+      "Meaning": "Sea (Latin)"
+    },
+    {
+      "Root": "Clair-",
+      "Meaning": "Clear, bright (Latin)"
+    },
+    {
+      "Root": "Fer-",
+      "Meaning": "Iron, strength (Saxon)"
+    },
+    {
+      "Root": "Amor-",
+      "Meaning": "Love (Latin)"
+    }
+  ],
+  "Outer Space Roots": [
+    {
+      "Root": "Astra-",
+      "Meaning": "Star (Latin)"
+    },
+    {
+      "Root": "Nova-",
+      "Meaning": "New, star explosion (Latin/astronomy)"
+    },
+    {
+      "Root": "Orion-",
+      "Meaning": "Hunter (Greek mythology and constellation)"
+    },
+    {
+      "Root": "Vega-",
+      "Meaning": "Brightest star in Lyra (Arabic origin)"
+    },
+    {
+      "Root": "Lun-",
+      "Meaning": "Moon (Latin)"
+    }
+  ],
+  "Sci-Fi Roots": [
+    {
+      "Root": "Zor-",
+      "Meaning": "Power, energy (fictional sci-fi root)"
+    },
+    {
+      "Root": "Kyra-",
+      "Meaning": "Sun, throne (Greek origin, sci-fi twist)"
+    },
+    {
+      "Root": "Vorl-",
+      "Meaning": "Pathfinder (fictional sci-fi root)"
+    },
+    {
+      "Root": "Nex-",
+      "Meaning": "Connection, link (Latin/scientific tone)"
+    },
+    {
+      "Root": "Aether-",
+      "Meaning": "Upper air, space (Latin/Greek mythology)"
+    }
+  ],
+  "Tech Roots": [
+    { "Root":"Lamina-",
+      "Meaning":"related to layers or thin sheets, connecting to modern tech concepts like lamination or stratified surfaces"
+    },
+    {
+      "Root": "Tess-",
+      "Meaning": "Tile, small modular unit (from tessella, Latin)"
+    },
+    {
+      "Root": "Arc-",
+      "Meaning": "bow, curve, or electric arc, connecting to robotics and energy"
+    },
+    {
+      "Root": "Soma-",
+      "Meaning": "Body, structure (Greek)"
+    },
+    {
+      "Root": "Synth-",
+      "Meaning": "To combine, synthetic (Greek)"
+    },
+    {
+      "Root": "Digit-",
+      "Meaning": "Finger, number; digital (Latin)"
+    },
+    {
+      "Root": "Techno-",
+      "Meaning": "Skill, art, technology (Greek)"
+    },
+    {
+      "Root": "Cyber-",
+      "Meaning": "Control, steer (Greek, cybernetics)"
+    },
+    {
+      "Root": "Bio-",
+      "Meaning": "Life, organic (Greek)"
+    },
+    {
+      "Root": "Nano-",
+      "Meaning": "Dwarf, extremely small (Greek)"
+    },
+    {
+      "Root": "Opti-",
+      "Meaning": "Light, vision (Latin)"
+    },
+    {
+      "Root": "Glifo-",
+      "Meaning": "Engraving, carving (Greek)"
+    }
+  ],
+  "Elvish-Inspired Roots": [
+    {
+      "Root": "Elen-",
+      "Meaning": "Star (Sindarin, Tolkien-inspired)"
+    },
+    {
+      "Root": "Syl-",
+      "Meaning": "Forest, woods (Latin/Saxon influence, elvish tone)"
+    },
+    {
+      "Root": "Faer-",
+      "Meaning": "Spirit (Sindarin, Tolkien-inspired)"
+    },
+    {
+      "Root": "Lorien-",
+      "Meaning": "Dream, golden (Sindarin, from Lothlórien)"
+    },
+    {
+      "Root": "Cal-",
+      "Meaning": "Bright, shining (Sindarin/Latin influence)"
+    },
+    {
+      "Root": "Eryn-",
+      "Meaning": "Forest (Sindarin-inspired)"
+    },
+    {
+      "Root": "Thal-",
+      "Meaning": "Shore (elvish tone, possibly Sindarin-derived)"
+    },
+    {
+      "Root": "Luin-",
+      "Meaning": "Blue (Sindarin-inspired)"
+    },
+    {
+      "Root": "Celeb-",
+      "Meaning": "Silver (Sindarin/Tolkien)"
+    },
+    {
+      "Root": "Ael-",
+      "Meaning": "Lake, pool (fictional elvish root, water-inspired)"
+    }
+  ]
+}

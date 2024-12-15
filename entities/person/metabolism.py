@@ -3,10 +3,13 @@
 # New file: Metabolism class now dynamically computes O2 and CO2 production based on weight, gender, age, etc.
 # Using NASA STD-3001 guidelines as a reference, we base daily O2 consumption and CO2 production on physiology.
 
-from config import (TIME_SCALE, SLEEP_TIME_100, HUNGER_TIME, BATHROOM_TIME, THIRST_TIME,
-                    THIRST_WEIGHT, BATHROOM_WEIGHT, HUNGER_WEIGHT, SLEEP_WEIGHT,
-                    JOBLESS_PENALTY, NO_BED_PENALTY, DAILY_WEIGHT_LOSS_RATE,
-                    BMI_THRESHOLD_MALE, BMI_THRESHOLD_FEMALE)
+"""
+Metabolism is the set of life-sustaining chemical reactions in organisms. The three main functions of metabolism are: 
+    the conversion of the energy in food to energy available to run cellular processes; 
+    the conversion of food to building blocks of proteins, lipids, nucleic acids, and some carbohydrates; 
+    and the elimination of metabolic wastes.
+    
+"""
 
 class Metabolism():
     def __init__(self):
@@ -15,6 +18,13 @@ class Metabolism():
         self.bathroom_inc = self.need_increment_per_irl_sec(BATHROOM_TIME)
         self.hunger_inc = self.need_increment_per_irl_sec(HUNGER_TIME)
         self.sleep_inc = self.need_increment_per_irl_sec(SLEEP_TIME_100)
+        self.aerobic_capacity = 1.0
+        self.max_co2_tolerance = 1000.0
+        self.o2_partial_pressure_range = (140.0, 300.0)
+        self.pressure_tolerance = (700.0, 1013.0)
+        self.rh_preference = 50.0
+        self.temp_preference = 22.0
+        self.temp_adjustability = 5.0
 
     def need_increment_per_irl_sec(self, in_game_time_for_100):
         # Calculate how fast a need increases per real second

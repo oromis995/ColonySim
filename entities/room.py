@@ -32,33 +32,27 @@ class Room():
 
 class Core(Room):      
 
-    def __init__(self, ship_resources):
-        super().__init__("Core", capacity=0)
-        #increase caps
-        ship_resources.max_o2 =+3360.0
-        ship_resources.max_h2o =+1000.0
-        ship_resources.max_meals =+80.0
-        ship_resources.max_solid_waste =+10.0
-        ship_resources.max_liquid_waste =+30.0
-        # add resources
-        ship_resources.o2 = 3360.0
-        ship_resources.h2o = 1000.0
-        ship_resources.meals = 80.0
-        ship_resources.solid_waste = 0
-        ship_resources.liquid_waste = 0
+    def __init__(self, ship):
+        super().__init__("Core")
 
+        ship.resources = {"o2":ship.resources["o2"]+3360.0,
+                          "h2o":ship.resources["h2o"]+1000.0,
+                          "canned_food":ship.resources["canned_food"]+80,
+                          "solid_waste":0,
+                          "liquid_waste":0}
+        ship.resource_caps = {"o2":ship.resource_caps["o2"]+3360.0,
+                          "h2o":ship.resource_caps["h2o"]+1000.0,
+                          "canned_food":ship.resource_caps["canned_food"]+80,
+                          "solid_waste":ship.resource_caps["solid_waste"]+10,
+                          "liquid_waste":ship.resource_caps["liquid_waste"]+30}
 
         # Add environmental components    
-
-    
-        
-
-
 
 class Quarters(Room):
     def __init__(self):
         # Capacity of 4 beds as per previous discussions
-        super().__init__("Quarters", {"sleep":"","sleep":"","sleep":"","sleep":""})
+        super().__init__("Quarters")
+        self.activities = {"sleep":"","sleep":"","sleep":"","sleep":""}
 
     def assign_person():
         pass

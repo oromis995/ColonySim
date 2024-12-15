@@ -1,0 +1,160 @@
+{
+    "suffixes": [
+      {
+        "Masculine": "-us",
+        "Feminine": "-a",
+        "GenderNeutral": "-um"
+      },
+      {
+        "Masculine": "-or",
+        "Feminine": "-riel",
+        "GenderNeutral": "-or"
+      },
+      {
+        "Masculine": "-an",
+        "Feminine": "-ana",
+        "GenderNeutral": "-an"
+      },
+      {
+        "Masculine": "-er",
+        "Feminine": "-ress",
+        "GenderNeutral": "-er"
+      },
+      {
+        "Masculine": "-ar",
+        "Feminine": "-ara",
+        "GenderNeutral": "-ar"
+      },
+      {
+        "Masculine": "-ian",
+        "Feminine": "-ienne",
+        "GenderNeutral": "-ian"
+      },
+      {
+        "Masculine": "-el",
+        "Feminine": "-elle",
+        "GenderNeutral": "-el"
+      },
+      {
+        "Masculine": "-es",
+        "Feminine": "-essa",
+        "GenderNeutral": "-es"
+      },
+      {
+        "Masculine": "-on",
+        "Feminine": "-ona",
+        "GenderNeutral": "-on"
+      },
+      {
+        "Masculine": "-i",
+        "Feminine": "-ia",
+        "GenderNeutral": "-i"
+      },
+      {
+        "Masculine": "-ic",
+        "Feminine": "-ica",
+        "GenderNeutral": "-ic"
+      },
+      {
+        "Masculine": "-is",
+        "Feminine": "-issa",
+        "GenderNeutral": "-is"
+      },
+      {
+        "Masculine": "-o",
+        "Feminine": "-a",
+        "GenderNeutral": "-o"
+      },
+      {
+        "Masculine": "-ius",
+        "Feminine": "-ia",
+        "GenderNeutral": "-ium"
+      },
+      {
+        "Masculine": "-eus",
+        "Feminine": "-ea",
+        "GenderNeutral": "-eum"
+      },
+      {
+        "Masculine": "-ael",
+        "Feminine": "-aelle",
+        "GenderNeutral": "-ael"
+      },
+      {
+        "Masculine": "-ien",
+        "Feminine": "-ienne",
+        "GenderNeutral": "-ien"
+      },
+      {
+        "Masculine": "-al",
+        "Feminine": "-ala",
+        "GenderNeutral": "-al"
+      },
+      {
+        "Masculine": "-en",
+        "Feminine": "-ena",
+        "GenderNeutral": "-en"
+      },
+      {
+        "Masculine": "-am",
+        "Feminine": "-ama",
+        "GenderNeutral": "-am"
+      },
+      {
+        "Masculine": "-arion",
+        "Feminine": "-ariona",
+        "GenderNeutral": "-arion"
+      },
+      {
+        "Masculine": "-iel",
+        "Feminine": "-iella",
+        "GenderNeutral": "-iel"
+      },
+      {
+        "Masculine": "-sil",
+        "Feminine": "-sila",
+        "GenderNeutral": "-sil"
+      },
+      {
+        "Masculine": "-nor",
+        "Feminine": "-nora",
+        "GenderNeutral": "-nor"
+      },
+      {
+        "Masculine": "-ielan",
+        "Feminine": "-ielana",
+        "GenderNeutral": "-ielan"
+      },
+      {
+        "Masculine": "-lith",
+        "Feminine": "-litha",
+        "GenderNeutral": "-lith"
+      },
+      {
+        "Masculine": "-wyn",
+        "Feminine": "-wynne",
+        "GenderNeutral": "-wyn"
+      },
+      {
+        "Masculine": "-dor",
+        "Feminine": "-dora",
+        "GenderNeutral": "-dor"
+      },
+      {
+        "Masculine": "-las",
+        "Feminine": "-lassa",
+        "GenderNeutral": "-las"
+      },
+      {
+        "Masculine": "-arin",
+        "Feminine": "-arina",
+        "GenderNeutral": "-arin"
+      },
+      {
+        "Masculine": "-thar",
+        "Feminine": "-thara",
+        "GenderNeutral": "-thar"
+      }
+    ]
+  }
+  

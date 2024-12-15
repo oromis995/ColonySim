@@ -28,14 +28,13 @@ def main():
                 running = False
             elif event.type == pygame.VIDEORESIZE:
                 window.resize(event.w, event.h)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button in (4, 5):
                 # Handle zooming with mouse wheel
-                if event.button in (4, 5):  # Mouse wheel up/down
-                    # Get the mouse position
-                    if event.button == 4:  # Zoom in
-                        window.zoom_in(event.pos)
-                    elif event.button == 5:  # Zoom out
-                        window.zoom_out(event.pos)
+                # Get the mouse position
+                if event.button == 4:  # Zoom in
+                    window.zoom_in(event.pos)
+                elif event.button == 5:  # Zoom out
+                    window.zoom_out(event.pos)
                     
         # Handle key presses for panning using WASD
         keys = pygame.key.get_pressed()
