@@ -13,8 +13,7 @@ class Person:
         self.needs = {"water":0.0,"bathroom":0.0,"food":0.0, "sleep":0.0, "mood":1.0}
         self.career = self.generate_career()
         self.movement = {"position":(0,0),"speed":0.5}
-        self.assigned_bed = False
-        self.assigned_job = False
+        self.assignments = {"bed": "","job":""}
         #self.Metabolism()
         # Needs managed by metabolism.py
 
@@ -56,6 +55,10 @@ class Person:
         
         first_name = get_random_name(first_name_file)
         last_name = get_random_name("Data/last_names.txt")
+        # ensures that the last name doesn't end the same way the first name does.
+        # I don't mind the first part of the name matching, people do that often.
+        while last_name[-2:] == first_name[-2:]:
+            last_name = get_random_name("Data/last_names.txt")
         color_name = random.choice(webcolors.names(spec='css3'))
         hair_color = {"name": color_name, "hex": webcolors.name_to_hex(color_name)}
         
@@ -74,10 +77,8 @@ class Person:
 
 
     def calculate_weight(height):
-
         # Calculate mean weight based on BMI = 22
-        height_m = height / 100  # Convert height to meters
-        mean_weight = 22 * (height_m ** 2)  # BMI formula rearranged
+        mean_weight = 22 * (height ** 2)  # BMI formula rearranged
         # Set variance as 10% of the mean squared for realistic variability
         variance = (0.1 * mean_weight) ** 2
         # Calculate gamma distribution parameters
@@ -111,7 +112,7 @@ class Person:
                 mean_height = 164.7  # Average adult female height in cm
                 height = random.gauss(mean_height, 7.07)
 
-        return round(height)
+        return round(height/100,2)
     
     
 if __name__ == "__main__":
@@ -119,7 +120,9 @@ if __name__ == "__main__":
     for _ in range(25):
         print("----------------------")
         person = Person()
-        for b in person.bio:
-            print(b,person.bio[b])
-        for h in person.health:
-            print(h,person.health[h])
+        print(person.bio)
+        print(person.health)
+        print(person.needs)
+        print(person.movement)
+        print(person.assignments)
+  
